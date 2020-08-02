@@ -103,7 +103,79 @@ Additionally, you can also use `Neoflow/FlashMessages/FlashAwareTrait` as a shor
  `Neoflow/FlashMessages/FlashAwareInterface`.
 
 ## Usage
-tbd
+The service `Neoflow\FlashMessages\Flash` provides the most needed methods to access the messages for the
+ current request and to add the messages for the next request.
+```php
+// Add message by key for the next request.
+$flash = $flash->addMessage('key', 'Your message.');
+
+// Get messages by key, set for the current request. Returns an array.
+$messages = $flash->getMessages('key');
+
+// Get first message by key, set for the current request, or default message as fallback, when no message exists.
+$firMessage = $flash->getLastMessage('key', 'Default message');
+
+// Get last message by key, set for the current request, or default message as fallback, when no message exists.
+$lastMessage = $flash->getLastMessage('key', 'Default message');
+
+// Keep messages, set for the current request, for the next request too. Already added messages will be overwritten. 
+$flash = $flash->keepMessages();
+```
+
+You can also call the handler `Neoflow\FlashMessages\Messages` for both types of messages.
+```php
+// Get messages set for the next request. Returns an instance of `Neoflow\FlashMessages\Messages`.
+$nextMessagesHandler = $flash->getNextMessages();
+  
+// Get messages, set for the current request. Returns an instance of `Neoflow\FlashMessages\Messages`.
+$currentMessagesHandler = $flash->getCurrentMessages();
+```
+
+The handler provides a complete set of methods to access and manipulate the messages.
+```php
+// Add message by key.
+$messagesHandler = $messagesHandler->add('key', 'Your messages');
+
+// Clear messages by key.
+$messagesHandler->clear('key');
+
+// Clear all messages.
+$messagesHandler->clearAll();
+
+// Count number of messages by key.
+$numberOfMessages = $messagesHandler->count('key');
+
+// Count number of keys.
+$numberOfKeys = $messagesHandler->countKeys();
+
+// Delete key.
+$messagesHandler->deleteKey('key');
+    
+// Get messages by key.
+$default = []; // Needs to be an array
+$messages = $messagesHandler->get('key', $default);
+
+// Get all messages. Returns an array..
+$messages = $messagesHandler->getAll();
+
+// Get first message by key, or default message as fallback, when no message exists.
+$messages = $messagesHandler->getFirst('key', 'Default message');
+
+// Get last message by key, or default message as fallback, when no message exists.
+$messages = $messagesHandler->getLast('key', 'Default message');
+    
+// Check whether key exists.
+$keyExists = $messagesHandler->hasKey('key');
+
+// Set messages. Already added messages will be overwritten.
+$messages = [
+    'key' => [
+        'Your message'
+    ]
+];
+$messagesHandler = $messagesHandler->set($messages);
+$messagesHandler = $messagesHandler->setReference($messages); // Or set messages as reference.
+``` 
   
 ## Contributors
 * Jonathan Nessier, [Neoflow](https://www.neoflow.ch)
@@ -116,9 +188,8 @@ If you would like to see this library develop further, or if you want to support
 ## History
 Slim offers with [Slim-Flash](https://github.com/slimphp/Slim-Flash) as standalone library for flash
  messages.
-Unfortunately the library looks a little bit abandoned on GitHub, has no interfaces implemented and doesn't support a 
- complete set of methods to access and manipulate both types of the messages (from current and for the next
-  request). 
+Unfortunately the library looks a little bit abandoned on GitHub, has no interfaces implemented and doesn't provide a 
+ complete set of methods to access and manipulate both types of messages.
 This circumstance led me to develop this PSR-15 compliant flash messages service for Slim 4.
 Inspired by the slimness of the framework itself.
 
