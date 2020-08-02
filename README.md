@@ -69,9 +69,9 @@ Alternatively, you can also load the storage of the flash messages with a closur
  the session...
 ```php
 $app->add(function ($request, $handler) use ($container) {
-    $storage = [
+    $storage = [ // Flash messages storage
         '_flashMessages' => []
-    ]; // Storage of the flash messages
+    ];
     $container->get(FlashInterface::class)->loadMessages($storage);
     return $handler->handle($request);
 });
