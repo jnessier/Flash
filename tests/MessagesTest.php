@@ -39,7 +39,7 @@ class MessagesTest extends TestCase
             'm3' => [
                 '3 Message A',
             ]
-        ], $this->messages->toArray());
+        ], $this->messages->getAll());
     }
 
     public function testClear(): void
@@ -53,7 +53,7 @@ class MessagesTest extends TestCase
     {
         $this->messages->clearAll();
 
-        $this->assertSame([], $this->messages->toArray());
+        $this->assertSame([], $this->messages->getAll());
     }
 
     public function testCount(): void
@@ -79,12 +79,12 @@ class MessagesTest extends TestCase
 
         $message->add('m1', '2 Message B');
 
-        $this->assertSame($GLOBALS, $message->toArray());
+        $this->assertSame($GLOBALS, $message->getAll());
     }
 
-    public function testDelete(): void
+    public function testDeleteKey(): void
     {
-        $this->messages->delete('m1');
+        $this->messages->deleteKey('m1');
 
         $this->assertFalse($this->messages->hasKey('m1'));
     }
@@ -120,13 +120,13 @@ class MessagesTest extends TestCase
         $this->assertFalse($this->messages->hasKey('m9'));
     }
 
-    public function testToArray(): void
+    public function testGetall(): void
     {
         $this->assertSame([
             'm1' => [
                 '1 Message A',
             ],
             'm2' => []
-        ], $this->messages->toArray());
+        ], $this->messages->getAll());
     }
 }

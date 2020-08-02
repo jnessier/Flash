@@ -4,12 +4,9 @@
 namespace Neoflow\FlashMessages\Test;
 
 use ArrayObject;
-use InvalidArgumentException;
 use Neoflow\FlashMessages\Exception\FlashException;
 use Neoflow\FlashMessages\Flash;
-use Neoflow\FlashMessages\Messages;
 use PHPUnit\Framework\TestCase;
-use RuntimeException;
 
 class FlashTest extends TestCase
 {
@@ -41,7 +38,7 @@ class FlashTest extends TestCase
             'm1' => [
                 '1 Message A',
             ],
-        ], $this->flash->getNextMessages()->toArray());
+        ], $this->flash->getNextMessages()->getAll());
     }
 
     public function testDirectStorageLoad(): void
@@ -60,7 +57,7 @@ class FlashTest extends TestCase
             'm1' => [
                 '1 Message A'
             ]
-        ], $flash->getCurrentMessages()->toArray());
+        ], $flash->getCurrentMessages()->getAll());
 
         $this->assertSame([
             '_flashMessages' => []
@@ -75,7 +72,7 @@ class FlashTest extends TestCase
                 '1 Message B'
             ],
             'm2' => []
-        ], $this->flash->getCurrentMessages()->toArray());
+        ], $this->flash->getCurrentMessages()->getAll());
     }
 
     public function testGetFirstMessage(): void
@@ -98,7 +95,7 @@ class FlashTest extends TestCase
 
     public function testGetNextMessages(): void
     {
-        $this->assertSame([], $this->flash->getNextMessages()->toArray());
+        $this->assertSame([], $this->flash->getNextMessages()->getAll());
     }
 
     public function testInvalidMessagesFromStorageLoad(): void
@@ -140,6 +137,6 @@ class FlashTest extends TestCase
                 '1 Message B'
             ],
             'm2' => []
-        ], $this->flash->getNextMessages()->toArray());
+        ], $_SESSION['_flashMessages']);
     }
 }

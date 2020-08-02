@@ -26,6 +26,6 @@ class FlashMiddlewareTest extends TestCase
         $flash->addMessage('m1', '1 Message Special A');
 
         $this->assertSame('1 Message A', $flash->getFirstMessage('m1'));
-        $this->assertSame($_SESSION['_flashMessages'], $flash->getNextMessages()->toArray());
+        $this->assertSame($_SESSION['_flashMessages'], $flash->getNextMessages()->getAll());
     }
 }
