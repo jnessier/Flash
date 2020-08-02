@@ -85,16 +85,16 @@ return [
     // ...
     FlashInterface::class => function () {
         $key = '_flashMessages'; // Key as identifier of the flash messages
-        $storage = [
+        $storage = [ // Flash messages storage
             '_flashMessages' => []
-        ]; // Storage of the flash messages
+        ];
         return new Flash($key, $storage);
     },
     // ...
 ];
 ```
 
-**Please note** The custom storage has to be an array or ArrayAccess/ArrayObject-implementation. 
+**Please note** The storage has to be an array or ArrayAccess/ArrayObject-implementation. 
 
 When your DI container supports inflectors (e.g. [league/container](https://container.thephpleague.com/3.x/inflectors/)),
  you can optionally register `Neoflow/FlashMessages/FlashAwareInterface` as inflector to your container definition.
@@ -109,72 +109,94 @@ The service `Neoflow\FlashMessages\Flash` provides the most needed methods to ac
 // Add message by key for the next request.
 $flash = $flash->addMessage('key', 'Your message.');
 
-// Get messages by key, set for the current request. Returns an array.
+// Get messages by key, set for the current request.
 $messages = $flash->getMessages('key');
 
-// Get first message by key, set for the current request, or default message as fallback, when no message exists.
-$firMessage = $flash->getLastMessage('key', 'Default message');
+// Get first message by key, set for the current request, or default when no message exists.
+$default = []; // Optional (default: null)
+$firstMessage = $flash->getLastMessage('key', $default);
 
-// Get last message by key, set for the current request, or default message as fallback, when no message exists.
-$lastMessage = $flash->getLastMessage('key', 'Default message');
+// Get last message by key, set for the current request, or default when no message exists.
+$default = []; // Optional (default: null)
+$lastMessage = $flash->getLastMessage('key', $default);
 
-// Keep messages, set for the current request, for the next request too. Already added messages will be overwritten. 
-$flash = $flash->keepMessages();
+// Keep messages, set for the current request, for the next request too.  
+// Note: Already added messages will be overwritten.
+$flash = $flash->keepMessages(); 
+
+// Load messages from storage as reference.
+$storage = [
+    '_flashMessages' => []
+];
+$flash = $flash->loadMessages($storage);
+
+// Load messages from session ($_SESSION).
+$flash = $flash->loadMessagesFromSession();
 ```
 
-You can also call the handler `Neoflow\FlashMessages\Messages` for both types of messages.
+You can also get the handler `Neoflow\FlashMessages\Messages` for each messages type.
 ```php
-// Get messages set for the next request. Returns an instance of `Neoflow\FlashMessages\Messages`.
+// Get handler with messages, set for the next request. Returns `Neoflow\FlashMessages\Messages`.
 $nextMessagesHandler = $flash->getNextMessages();
   
-// Get messages, set for the current request. Returns an instance of `Neoflow\FlashMessages\Messages`.
+// Get handler with messages, set for the current request. Returns `Neoflow\FlashMessages\Messages`.
 $currentMessagesHandler = $flash->getCurrentMessages();
 ```
 
 The handler provides a complete set of methods to access and manipulate the messages.
 ```php
 // Add message by key.
-$messagesHandler = $messagesHandler->add('key', 'Your messages');
+$handler = $handler->add('key', 'Your messages');
 
 // Clear messages by key.
-$messagesHandler->clear('key');
+$handler->clear('key');
 
 // Clear all messages.
-$messagesHandler->clearAll();
+$handler->clearAll();
 
 // Count number of messages by key.
-$numberOfMessages = $messagesHandler->count('key');
+$numberOfMessages = $handler->count('key');
 
 // Count number of keys.
-$numberOfKeys = $messagesHandler->countKeys();
+$numberOfKeys = $handler->countKeys();
 
 // Delete key.
-$messagesHandler->deleteKey('key');
+$handler->deleteKey('key');
     
-// Get messages by key.
-$default = []; // Needs to be an array
-$messages = $messagesHandler->get('key', $default);
+// Get messages by key, or default when no message exists.
+$default = []; // Optional (default: [])
+$messages = $handler->get('key', $default);
 
-// Get all messages. Returns an array..
-$messages = $messagesHandler->getAll();
+// Get all messages. Returns an array.
+$messages = $handler->getAll();
 
-// Get first message by key, or default message as fallback, when no message exists.
-$messages = $messagesHandler->getFirst('key', 'Default message');
+// Get first message by key, or default when no message exists.
+$default = 'Default first message'; // Optional (default: null)
+$firstMessage = $handler->getFirst('key', $default);
 
-// Get last message by key, or default message as fallback, when no message exists.
-$messages = $messagesHandler->getLast('key', 'Default message');
+// Get last message by key, or default when no message exists.
+$default = 'Default last message'; // Optional (default: null)
+$lastMessage = $handler->getLast('key', $default);
     
 // Check whether key exists.
-$keyExists = $messagesHandler->hasKey('key');
+$keyExists = $handler->hasKey('key');
 
-// Set messages. Already added messages will be overwritten.
+// Set messages.
+// Note: Already added messages will be overwritten.
+$handler = $handler->set([
+    'key' => [
+        'Your message'
+    ]
+]);
+
+// Set messages as reference.
+// Note: Already added messages will be overwritten.
 $messages = [
     'key' => [
         'Your message'
     ]
 ];
-$messagesHandler = $messagesHandler->set($messages);
-$messagesHandler = $messagesHandler->setReference($messages); // Or set messages as reference.
+$handler = $handler->setReference($messages);
 ``` 
   
 ## Contributors
