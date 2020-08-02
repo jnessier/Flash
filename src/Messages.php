@@ -90,7 +90,7 @@ final class Messages implements MessagesInterface
     /**
      * {@inheritDoc}
      */
-    public function delete(string $key): void
+    public function deleteKey(string $key): void
     {
         if ($this->hasKey($key)) {
             unset($this->messages[$key]);
@@ -107,6 +107,14 @@ final class Messages implements MessagesInterface
         }
 
         return $default;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getAll(): array
+    {
+        return $this->messages;
     }
 
     /**
@@ -160,13 +168,5 @@ final class Messages implements MessagesInterface
         $this->messages = &$messages;
 
         return $this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function toArray(): array
-    {
-        return $this->messages;
     }
 }

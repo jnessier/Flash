@@ -38,7 +38,7 @@ interface MessagesInterface
     public function count(string $key): int;
 
     /**
-     * Count number all keys
+     * Count number of keys
      *
      * @return int
      */
@@ -61,11 +61,11 @@ interface MessagesInterface
     public static function createByReference(array &$messages): self;
 
     /**
-     * Delete messages by key
+     * Delete key
      *
      * @param string $key Key as identifier
      */
-    public function delete(string $key): void;
+    public function deleteKey(string $key): void;
 
     /**
      * Get messages by key
@@ -75,6 +75,13 @@ interface MessagesInterface
      * @return array
      */
     public function get(string $key, array $default = []): array;
+
+    /**
+     * Get all messages
+     *
+     * @return array
+     */
+    public function getAll(): array;
 
     /**
      * Get first message by key
@@ -117,11 +124,4 @@ interface MessagesInterface
      * @return MessagesInterface
      */
     public function setReference(array &$messages): MessagesInterface;
-
-    /**
-     * Get all messages as array
-     *
-     * @return array
-     */
-    public function toArray(): array;
 }

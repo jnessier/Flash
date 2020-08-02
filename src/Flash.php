@@ -97,7 +97,7 @@ final class Flash implements FlashInterface
      */
     public function keepMessages(): FlashInterface
     {
-        $currentMessages = $this->currentMessages->toArray();
+        $currentMessages = $this->currentMessages->getAll();
         $this->nextMessages->set($currentMessages);
 
         return $this;

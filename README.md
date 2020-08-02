@@ -85,16 +85,16 @@ return [
     // ...
     FlashInterface::class => function () {
         $key = '_flashMessages'; // Key as identifier of the flash messages
-        $storage = [
+        $storage = [ // Flash messages storage
             '_flashMessages' => []
-        ]; // Storage of the flash messages
+        ];
         return new Flash($key, $storage);
     },
     // ...
 ];
 ```
 
-**Please note** The custom storage has to be an array or ArrayAccess/ArrayObject-implementation. 
+**Please note** The storage has to be an array or ArrayAccess/ArrayObject-implementation. 
 
 When your DI container supports inflectors (e.g. [league/container](https://container.thephpleague.com/3.x/inflectors/)),
  you can optionally register `Neoflow/FlashMessages/FlashAwareInterface` as inflector to your container definition.
@@ -103,7 +103,101 @@ Additionally, you can also use `Neoflow/FlashMessages/FlashAwareTrait` as a shor
  `Neoflow/FlashMessages/FlashAwareInterface`.
 
 ## Usage
-tbd
+The service `Neoflow\FlashMessages\Flash` provides the most needed methods to access the messages for the
+ current request and to add the messages for the next request.
+```php
+// Add message by key for the next request.
+$flash = $flash->addMessage('key', 'Your message.');
+
+// Get messages by key, set for the current request.
+$messages = $flash->getMessages('key');
+
+// Get first message by key, set for the current request, or default when no message exists.
+$default = []; // Optional (default: null)
+$firstMessage = $flash->getLastMessage('key', $default);
+
+// Get last message by key, set for the current request, or default when no message exists.
+$default = []; // Optional (default: null)
+$lastMessage = $flash->getLastMessage('key', $default);
+
+// Keep messages, set for the current request, for the next request too.  
+// Note: Already added messages will be overwritten.
+$flash = $flash->keepMessages(); 
+
+// Load messages from storage as reference.
+$storage = [
+    '_flashMessages' => []
+];
+$flash = $flash->loadMessages($storage);
+
+// Load messages from session ($_SESSION).
+$flash = $flash->loadMessagesFromSession();
+```
+
+You can also get the handler `Neoflow\FlashMessages\Messages` for each messages type.
+```php
+// Get handler with messages, set for the next request. Returns `Neoflow\FlashMessages\Messages`.
+$nextMessagesHandler = $flash->getNextMessages();
+  
+// Get handler with messages, set for the current request. Returns `Neoflow\FlashMessages\Messages`.
+$currentMessagesHandler = $flash->getCurrentMessages();
+```
+
+The handler provides a complete set of methods to access and manipulate the messages.
+```php
+// Add message by key.
+$handler = $handler->add('key', 'Your messages');
+
+// Clear messages by key.
+$handler->clear('key');
+
+// Clear all messages.
+$handler->clearAll();
+
+// Count number of messages by key.
+$numberOfMessages = $handler->count('key');
+
+// Count number of keys.
+$numberOfKeys = $handler->countKeys();
+
+// Delete key.
+$handler->deleteKey('key');
+    
+// Get messages by key, or default when no message exists.
+$default = []; // Optional (default: [])
+$messages = $handler->get('key', $default);
+
+// Get all messages. Returns an array.
+$messages = $handler->getAll();
+
+// Get first message by key, or default when no message exists.
+$default = 'Default first message'; // Optional (default: null)
+$firstMessage = $handler->getFirst('key', $default);
+
+// Get last message by key, or default when no message exists.
+$default = 'Default last message'; // Optional (default: null)
+$lastMessage = $handler->getLast('key', $default);
+    
+// Check whether key exists.
+$keyExists = $handler->hasKey('key');
+
+// Set messages.
+// Note: Already added messages will be overwritten.
+$handler = $handler->set([
+    'key' => [
+        'Your message'
+    ]
+]);
+
+// Set messages as reference.
+// Note: Already added messages will be overwritten.
+$messages = [
+    'key' => [
+        'Your message'
+    ]
+];
+$handler = $handler->setReference($messages);
+``` 
   
 ## Contributors
 * Jonathan Nessier, [Neoflow](https://www.neoflow.ch)
@@ -116,9 +210,8 @@ If you would like to see this library develop further, or if you want to support
 ## History
 Slim offers with [Slim-Flash](https://github.com/slimphp/Slim-Flash) as standalone library for flash
  messages.
-Unfortunately the library looks a little bit abandoned on GitHub, has no interfaces implemented and doesn't support a 
- complete set of methods to access and manipulate both types of the messages (from current and for the next
-  request). 
+Unfortunately the library looks a little bit abandoned on GitHub, has no interfaces implemented and doesn't provide a 
+ complete set of methods to access and manipulate both types of messages.
 This circumstance led me to develop this PSR-15 compliant flash messages service for Slim 4.
 Inspired by the slimness of the framework itself.
 

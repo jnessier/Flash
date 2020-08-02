@@ -18,55 +18,55 @@ interface FlashInterface
     public function addMessage(string $key, $message): self;
 
     /**
-     * Get messages set for current request
+     * Get messages, set for the current request
      *
      * @return MessagesInterface
      */
     public function getCurrentMessages(): MessagesInterface;
 
     /**
-     * Get first message by key from current request
+     * Get first message by key, set for the current request
      *
      * @param string $key Key as identifier
-     * @param mixed $default Fallback value when key doesn't exists
+     * @param mixed $default Fallback value when no message exists
      * @return mixed
      */
     public function getFirstMessage(string $key, $default = null);
 
     /**
-     * Get last message by key from current request
+     * Get last message by key, set for the current request
      *
      * @param string $key Key as identifier
-     * @param mixed $default Fallback value when key doesn't exists
+     * @param mixed $default Fallback value when no message exists
      * @return mixed
      */
     public function getLastMessage(string $key, $default = null);
 
     /**
-     * Get messages by key from current request
+     * Get messages by key, set for the current request
      *
      * @param string $key Key as identifier
-     * @param mixed $default Fallback value when key doesn't exists
+     * @param mixed $default Fallback value when no messages exists
      * @return array
      */
     public function getMessages(string $key, array $default = []): array;
 
     /**
-     * Get messages set for next request
+     * Get messages, set for the next request
      *
      * @return MessagesInterface
      */
     public function getNextMessages(): MessagesInterface;
 
     /**
-     * Keep current messages for next request
+     * Keep current messages for the next request
      *
      * @return self
      */
     public function keepMessages(): self;
 
     /**
-     * Load storage of flash messages
+     * Load messages from storage
      *
      * @param array|ArrayAccess|ArrayObject $storage Flash messages storage
      * @return self
@@ -74,7 +74,7 @@ interface FlashInterface
     public function loadMessages(&$storage): self;
 
     /**
-     * Load storage of flash messages from session
+     * Load messages from session
      *
      * @return self
      */
