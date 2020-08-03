@@ -37,7 +37,6 @@ final class Flash implements FlashInterface
         $this->key = $key;
 
         if (!is_null($storage)) {
-            $storage = $storage;
             $this->loadMessages($storage);
         }
     }
@@ -47,7 +46,7 @@ final class Flash implements FlashInterface
      */
     public function addMessage(string $key, $message): FlashInterface
     {
-        $this->nextMessages->add($key, $message);
+        $this->getNextMessages()->add($key, $message);
 
         return $this;
     }
@@ -57,6 +56,9 @@ final class Flash implements FlashInterface
      */
     public function getCurrentMessages(): MessagesInterface
     {
+        if (!$this->currentMessages instanceof Messages) {
+            throw new FlashException('Getting messages failed. Messages not loaded from storage yet.');
+        }
         return $this->currentMessages;
     }
 
@@ -65,7 +67,7 @@ final class Flash implements FlashInterface
      */
     public function getFirstMessage(string $key, $default = null)
     {
-        return $this->currentMessages->getFirst($key, $default);
+        return $this->getCurrentMessages()->getFirst($key, $default);
     }
 
     /**
@@ -73,7 +75,7 @@ final class Flash implements FlashInterface
      */
     public function getLastMessage(string $key, $default = null)
     {
-        return $this->currentMessages->getLast($key, $default);
+        return $this->getCurrentMessages()->getLast($key, $default);
     }
 
     /**
@@ -81,7 +83,7 @@ final class Flash implements FlashInterface
      */
     public function getMessages(string $key, array $default = []): array
     {
-        return $this->currentMessages->get($key, $default);
+        return $this->getCurrentMessages()->get($key, $default);
     }
 
     /**
@@ -89,6 +91,9 @@ final class Flash implements FlashInterface
      */
     public function getNextMessages(): MessagesInterface
     {
+        if (!$this->nextMessages instanceof Messages) {
+            throw new FlashException('Getting messages failed. Messages not loaded from storage yet.');
+        }
         return $this->nextMessages;
     }
 
@@ -105,8 +110,6 @@ final class Flash implements FlashInterface
 
     /**
      * {@inheritDoc}
-     *
-     * @throws FlashException
      */
     public function loadMessages(&$storage): FlashInterface
     {
@@ -132,8 +135,6 @@ final class Flash implements FlashInterface
 
     /**
      * {@inheritDoc}
-     *
-     * @throws FlashException
      */
     public function loadMessagesFromSession(): FlashInterface
     {

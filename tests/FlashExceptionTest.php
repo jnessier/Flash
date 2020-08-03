@@ -41,4 +41,20 @@ class FlashExceptionTest extends TestCase
         $invalidStorage = 'foo bar';
         (new Flash())->loadMessages($invalidStorage);
     }
+
+    public function testNotLoadedCurrentMessages(): void
+    {
+        $this->expectException(FlashException::class);
+        $this->expectExceptionMessage('Getting messages failed. Messages not loaded from storage yet.');
+
+        (new Flash())->getCurrentMessages();
+    }
+
+    public function testNotLoadedNextMessages(): void
+    {
+        $this->expectException(FlashException::class);
+        $this->expectExceptionMessage('Getting messages failed. Messages not loaded from storage yet.');
+
+        (new Flash())->getNextMessages();
+    }
 }

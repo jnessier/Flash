@@ -3,8 +3,8 @@
 
 namespace Neoflow\FlashMessages\Exception;
 
-use Exception;
+use RuntimeException;
 
-class FlashException extends Exception
+class FlashException extends RuntimeException
 {
 }
