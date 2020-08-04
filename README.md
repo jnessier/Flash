@@ -33,10 +33,10 @@ composer require neoflow/flash-messages
 ```
 
 ## Configuration
-The following instructions based on [Slim 4](http://www.slimframework.com), in combination with [PHP-DI](https://php-di.org), but should be adaptable for 
-any PSR-11/PSR-15 compliant frameworks and libraries.
+The following instructions based on [Slim 4](http://www.slimframework.com), in combination with
+ [PHP-DI](https://php-di.org), but should be adaptable for any PSR-11/PSR-15 compliant frameworks and libraries.
 
-Add the service `Neoflow\FlashMessages\Flash` and middleware `Neoflow\FlashMessages\FlashMiddleware`
+Add the service `Neoflow\FlashMessages\Flash` and middleware `Neoflow\FlashMessages\Middleware\FlashMiddleware`
  to the container definitions...
 ```php
 use Neoflow\FlashMessages\Flash;
@@ -137,10 +137,10 @@ $flash = $flash->loadMessagesFromSession();
 You can also get the handler `Neoflow\FlashMessages\Messages` for each messages type.
 ```php
 // Get handler with messages, set for the next request. Returns `Neoflow\FlashMessages\Messages`.
-$nextMessagesHandler = $flash->getNextMessages();
+$handler = $flash->getNextMessages();
   
 // Get handler with messages, set for the current request. Returns `Neoflow\FlashMessages\Messages`.
-$currentMessagesHandler = $flash->getCurrentMessages();
+$handler = $flash->getCurrentMessages();
 ```
 
 The handler provides a complete set of methods to access and manipulate the messages.
@@ -157,40 +157,32 @@ $handler->clearAll();
 // Count number of messages by key.
 $numberOfMessages = $handler->count('key');
 
-// Count number of keys.
-$numberOfKeys = $handler->countKeys();
-
-// Delete key.
-$handler->deleteKey('key');
-    
-// Get messages by key, or default when no message exists.
+// Get messages by key, or default value when no message exists.
 $default = []; // Optional (default: [])
 $messages = $handler->get('key', $default);
 
-// Get all messages. Returns an array.
+// Get all messages.
 $messages = $handler->getAll();
 
-// Get first message by key, or default when no message exists.
+// Get first message by key, or default value when no message exists.
 $default = 'Default first message'; // Optional (default: null)
 $firstMessage = $handler->getFirst('key', $default);
 
-// Get last message by key, or default when no message exists.
+// Get last message by key, or default value when no message exists.
 $default = 'Default last message'; // Optional (default: null)
 $lastMessage = $handler->getLast('key', $default);
     
-// Check whether key exists.
-$keyExists = $handler->hasKey('key');
+// Check whether messages by key exists.
+$keyExists = $handler->has('key');
 
-// Set messages.
-// Note: Already added messages will be overwritten.
+// Set messages. Already set messages will be overwritten.
 $handler = $handler->set([
     'key' => [
         'Your message'
     ]
 ]);
 
-// Set messages as reference.
-// Note: Already added messages will be overwritten.
+// Set referenced messages. Already set messages will be overwritten.
 $messages = [
     'key' => [
         'Your message'

@@ -6,16 +6,16 @@ namespace Neoflow\FlashMessages;
 interface MessagesInterface
 {
     /**
-     * Add message by key
+     * Add message by key.
      *
      * @param string $key Key as identifier
-     * @param mixed $message Message to add
+     * @param mixed $message Message
      * @return self
      */
     public function add(string $key, $message): self;
 
     /**
-     * Clear messages by key
+     * Clear messages by key.
      *
      * @param string $key Key as identifier
      * @return void
@@ -23,14 +23,14 @@ interface MessagesInterface
     public function clear(string $key): void;
 
     /**
-     * Clear all messages
+     * Clear all messages.
      *
      * @return void
      */
     public function clearAll(): void;
 
     /**
-     * Count number of messages by key
+     * Count number of messages by key.
      *
      * @param string $key Key as identifier
      * @return int
@@ -38,34 +38,20 @@ interface MessagesInterface
     public function count(string $key): int;
 
     /**
-     * Count number of keys
+     * Create handler with messages.
      *
-     * @return int
-     */
-    public function countKeys(): int;
-
-    /**
-     * Create handler
-     *
-     * @param array $messages Initial messages
+     * @param array $messages Messages
      * @return Messages
      */
     public static function create(array $messages): self;
 
     /**
-     * Create handler with referenced messages
+     * Create handler with referenced messages.
      *
-     * @param array $messages Initial messages
+     * @param array $messages Messages
      * @return Messages
      */
     public static function createByReference(array &$messages): self;
-
-    /**
-     * Delete key
-     *
-     * @param string $key Key as identifier
-     */
-    public function deleteKey(string $key): void;
 
     /**
      * Get messages by key
@@ -77,17 +63,18 @@ interface MessagesInterface
     public function get(string $key, array $default = []): array;
 
     /**
-     * Get all messages
+     * Get all messages.
      *
      * @return array
      */
     public function getAll(): array;
 
     /**
-     * Get first message by key
+     * Get first message by key.
      *
      * @param string $key Key as identifier
      * @param mixed $default Fallback value when key doesn't exists
+     *
      * @return mixed
      */
     public function getFirst(string $key, $default = null);
@@ -96,31 +83,35 @@ interface MessagesInterface
      * Get last message by key
      *
      * @param string $key Key as identifier
-     * @param mixed $default Fallback value when key doesn't exists
+     * @param mixed $default Default value when key doesn't exists
+     *
      * @return mixed
      */
     public function getLast(string $key, $default = null);
 
     /**
-     * Check whether key exists
+     * Check whether messages by key exists.
      *
      * @param string $key Key as identifier
+     *
      * @return bool
      */
-    public function hasKey(string $key): bool;
+    public function has(string $key): bool;
 
     /**
-     * Set messages
+     * Set messages. Already set messages will be overwritten.
      *
-     * @param array $messages Messages to set
+     * @param array $messages Messages
+     *
      * @return MessagesInterface
      */
     public function set(array $messages): MessagesInterface;
 
     /**
-     * Set referenced messages
+     * Set referenced messages. Already set messages will be overwritten.
      *
-     * @param array $messages Messages to set
+     * @param array $messages Messages
+     *
      * @return MessagesInterface
      */
     public function setReference(array &$messages): MessagesInterface;

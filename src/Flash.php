@@ -31,6 +31,8 @@ final class Flash implements FlashInterface
      *
      * @param string $key Key as messages identifier
      * @param array|ArrayAccess|ArrayObject|null $storage Flash messages storage
+     *
+     * @throws FlashException
      */
     public function __construct(string $key = '_flashMessages', &$storage = null)
     {
@@ -43,6 +45,8 @@ final class Flash implements FlashInterface
 
     /**
      * {@inheritDoc}
+     *
+     * @throws FlashException
      */
     public function addMessage(string $key, $message): FlashInterface
     {
@@ -53,17 +57,21 @@ final class Flash implements FlashInterface
 
     /**
      * {@inheritDoc}
+     *
+     * @throws FlashException
      */
     public function getCurrentMessages(): MessagesInterface
     {
         if (!$this->currentMessages instanceof Messages) {
-            throw new FlashException('Getting messages failed. Messages not loaded from storage yet.');
+            throw new FlashException('Messages for current request does not exists. Messages not loaded from storage yet.');
         }
         return $this->currentMessages;
     }
 
     /**
      * {@inheritDoc}
+     *
+     * @throws FlashException
      */
     public function getFirstMessage(string $key, $default = null)
     {
@@ -72,6 +80,8 @@ final class Flash implements FlashInterface
 
     /**
      * {@inheritDoc}
+     *
+     * @throws FlashException
      */
     public function getLastMessage(string $key, $default = null)
     {
@@ -80,6 +90,8 @@ final class Flash implements FlashInterface
 
     /**
      * {@inheritDoc}
+     *
+     * @throws FlashException
      */
     public function getMessages(string $key, array $default = []): array
     {
@@ -88,11 +100,13 @@ final class Flash implements FlashInterface
 
     /**
      * {@inheritDoc}
+     *
+     * @throws FlashException
      */
     public function getNextMessages(): MessagesInterface
     {
         if (!$this->nextMessages instanceof Messages) {
-            throw new FlashException('Getting messages failed. Messages not loaded from storage yet.');
+            throw new FlashException('Messages for next request does not exists. Messages not loaded from storage yet.');
         }
         return $this->nextMessages;
     }
@@ -110,18 +124,20 @@ final class Flash implements FlashInterface
 
     /**
      * {@inheritDoc}
+     *
+     * @throws FlashException
      */
     public function loadMessages(&$storage): FlashInterface
     {
         if (!is_array($storage) && !$storage instanceof ArrayAccess && !$storage instanceof ArrayObject) {
-            throw new FlashException('Loading storage failed. Storage must be an array or an ArrayAccess (or ArrayObject) implementation.');
+            throw new FlashException('Load messages from storage failed. Storage must be an array or an ArrayAccess (or ArrayObject) implementation.');
         }
 
         $this->currentMessages = Messages::create([]);
         $storage = (array) $storage;
         if (array_key_exists($this->key, $storage)) {
             if (!is_array($storage[$this->key])) {
-                throw new FlashException('Loading storage failed. Key "' . $this->key . '" for flash messages found, but value is not an array.');
+                throw new FlashException('Load messages from storage failed. Key "' . $this->key . '" for flash messages found, but value is not an array.');
             }
             $this->currentMessages->set($storage[$this->key]);
         }
@@ -135,11 +151,13 @@ final class Flash implements FlashInterface
 
     /**
      * {@inheritDoc}
+     *
+     * @throws FlashException
      */
     public function loadMessagesFromSession(): FlashInterface
     {
         if (!isset($_SESSION)) {
-            throw new FlashException('Loading storage from session failed. Session not started yet.');
+            throw new FlashException('Load messages from session failed. Session not started yet.');
         }
         return $this->loadMessages($_SESSION);
     }

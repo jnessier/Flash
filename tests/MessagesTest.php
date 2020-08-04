@@ -62,10 +62,6 @@ class MessagesTest extends TestCase
         $this->assertSame(0, $this->messages->count('m9'));
     }
 
-    public function testCountKeys(): void
-    {
-        $this->assertSame(2, $this->messages->countKeys());
-    }
 
     public function testCreateByReference(): void
     {
@@ -80,13 +76,6 @@ class MessagesTest extends TestCase
         $message->add('m1', '2 Message B');
 
         $this->assertSame($GLOBALS, $message->getAll());
-    }
-
-    public function testDeleteKey(): void
-    {
-        $this->messages->deleteKey('m1');
-
-        $this->assertFalse($this->messages->hasKey('m1'));
     }
 
     public function testGet(): void
@@ -114,12 +103,6 @@ class MessagesTest extends TestCase
         $this->assertSame([], $this->messages->getLast('m9'));
     }
 
-    public function testHasKey(): void
-    {
-        $this->assertTrue($this->messages->hasKey('m1'));
-        $this->assertFalse($this->messages->hasKey('m9'));
-    }
-
     public function testGetall(): void
     {
         $this->assertSame([
@@ -128,5 +111,11 @@ class MessagesTest extends TestCase
             ],
             'm2' => []
         ], $this->messages->getAll());
+    }
+
+    public function testHas(): void
+    {
+        $this->assertTrue($this->messages->has('m1'));
+        $this->assertFalse($this->messages->has('m9'));
     }
 }

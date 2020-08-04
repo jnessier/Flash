@@ -38,7 +38,7 @@ final class Messages implements MessagesInterface
      */
     public function clear(string $key): void
     {
-        if ($this->hasKey($key)) {
+        if ($this->has($key)) {
             $this->messages[$key] = [];
         }
     }
@@ -56,19 +56,11 @@ final class Messages implements MessagesInterface
      */
     public function count(string $key): int
     {
-        if ($this->hasKey($key)) {
+        if ($this->has($key)) {
             return count($this->messages[$key]);
         }
 
         return 0;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function countKeys(): int
-    {
-        return count($this->messages);
     }
 
     /**
@@ -90,19 +82,9 @@ final class Messages implements MessagesInterface
     /**
      * {@inheritDoc}
      */
-    public function deleteKey(string $key): void
-    {
-        if ($this->hasKey($key)) {
-            unset($this->messages[$key]);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public function get(string $key, $default = []): array
     {
-        if ($this->hasKey($key)) {
+        if ($this->has($key)) {
             return $this->messages[$key];
         }
 
@@ -122,7 +104,7 @@ final class Messages implements MessagesInterface
      */
     public function getFirst(string $key, $default = [])
     {
-        if ($this->hasKey($key) && $this->count($key)) {
+        if ($this->has($key) && $this->count($key)) {
             return $this->messages[$key][0];
         }
 
@@ -134,7 +116,7 @@ final class Messages implements MessagesInterface
      */
     public function getLast(string $key, $default = [])
     {
-        if ($this->hasKey($key) && $this->count($key)) {
+        if ($this->has($key) && $this->count($key)) {
             $lastIndex = $this->count($key) - 1;
             return $this->messages[$key][$lastIndex];
         }
@@ -145,7 +127,7 @@ final class Messages implements MessagesInterface
     /**
      * {@inheritDoc}
      */
-    public function hasKey(string $key): bool
+    public function has(string $key): bool
     {
         return isset($this->messages[$key]);
     }

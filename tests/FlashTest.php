@@ -101,7 +101,7 @@ class FlashTest extends TestCase
     public function testInvalidMessagesFromStorageLoad(): void
     {
         $this->expectException(FlashException::class);
-        $this->expectExceptionMessage('Loading storage failed. Key "_flashMessages" for flash messages found, but value is not an array.');
+        $this->expectExceptionMessage('Load messages from storage failed. Key "_flashMessages" for flash messages found, but value is not an array.');
 
         $invalidStorage = [
             '_flashMessages' => 'foo bar'
@@ -112,7 +112,7 @@ class FlashTest extends TestCase
     public function testInvalidMessagesLoadFromSession(): void
     {
         $this->expectException(FlashException::class);
-        $this->expectExceptionMessage('Loading storage from session failed. Session not started yet.');
+        $this->expectExceptionMessage('Load messages from session failed. Session not started yet.');
 
         unset($_SESSION);
         $this->flash->loadMessagesFromSession();
@@ -121,7 +121,7 @@ class FlashTest extends TestCase
     public function testInvalidStorageLoad(): void
     {
         $this->expectException(FlashException::class);
-        $this->expectExceptionMessage('Loading storage failed. Storage must be an array or an ArrayAccess (or ArrayObject) implementation.');
+        $this->expectExceptionMessage('Load messages from storage failed. Storage must be an array or an ArrayAccess (or ArrayObject) implementation.');
 
         $invalidStorage = 'foo bar';
         $this->flash->loadMessages($invalidStorage);
