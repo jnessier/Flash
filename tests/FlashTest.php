@@ -4,7 +4,6 @@
 namespace Neoflow\FlashMessages\Test;
 
 use ArrayObject;
-use Neoflow\FlashMessages\Exception\FlashException;
 use Neoflow\FlashMessages\Flash;
 use PHPUnit\Framework\TestCase;
 
@@ -96,35 +95,6 @@ class FlashTest extends TestCase
     public function testGetNextMessages(): void
     {
         $this->assertSame([], $this->flash->getNextMessages()->getAll());
-    }
-
-    public function testInvalidMessagesFromStorageLoad(): void
-    {
-        $this->expectException(FlashException::class);
-        $this->expectExceptionMessage('Load messages from storage failed. Key "_flashMessages" for flash messages found, but value is not an array.');
-
-        $invalidStorage = [
-            '_flashMessages' => 'foo bar'
-        ];
-        $this->flash->loadMessages($invalidStorage);
-    }
-
-    public function testInvalidMessagesLoadFromSession(): void
-    {
-        $this->expectException(FlashException::class);
-        $this->expectExceptionMessage('Load messages from session failed. Session not started yet.');
-
-        unset($_SESSION);
-        $this->flash->loadMessagesFromSession();
-    }
-
-    public function testInvalidStorageLoad(): void
-    {
-        $this->expectException(FlashException::class);
-        $this->expectExceptionMessage('Load messages from storage failed. Storage must be an array or an ArrayAccess (or ArrayObject) implementation.');
-
-        $invalidStorage = 'foo bar';
-        $this->flash->loadMessages($invalidStorage);
     }
 
     public function testKeepMessages(): void

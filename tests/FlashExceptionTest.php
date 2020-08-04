@@ -3,13 +3,9 @@
 
 namespace Neoflow\FlashMessages\Test;
 
-use ArrayObject;
-use InvalidArgumentException;
 use Neoflow\FlashMessages\Exception\FlashException;
 use Neoflow\FlashMessages\Flash;
-use Neoflow\FlashMessages\Messages;
 use PHPUnit\Framework\TestCase;
-use RuntimeException;
 
 class FlashExceptionTest extends TestCase
 {
@@ -36,7 +32,7 @@ class FlashExceptionTest extends TestCase
     public function testInvalidStorageLoad(): void
     {
         $this->expectException(FlashException::class);
-        $this->expectExceptionMessage('Load messages from storage failed. Storage must be an array or an ArrayAccess (or ArrayObject) implementation.');
+        $this->expectExceptionMessage('Load messages from storage failed. Storage must be an array or an ArrayAccess-implementation.');
 
         $invalidStorage = 'foo bar';
         (new Flash())->loadMessages($invalidStorage);

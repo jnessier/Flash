@@ -4,10 +4,7 @@
 namespace Neoflow\FlashMessages;
 
 use ArrayAccess;
-use ArrayObject;
-use InvalidArgumentException;
 use Neoflow\FlashMessages\Exception\FlashException;
-use RuntimeException;
 
 final class Flash implements FlashInterface
 {
@@ -30,7 +27,7 @@ final class Flash implements FlashInterface
      * Constructor.
      *
      * @param string $key Key as messages identifier
-     * @param array|ArrayAccess|ArrayObject|null $storage Flash messages storage
+     * @param array|ArrayAccess|null $storage Flash messages storage
      *
      * @throws FlashException
      */
@@ -114,12 +111,10 @@ final class Flash implements FlashInterface
     /**
      * {@inheritDoc}
      */
-    public function keepMessages(): FlashInterface
+    public function keepMessages(): void
     {
         $currentMessages = $this->currentMessages->getAll();
         $this->nextMessages->set($currentMessages);
-
-        return $this;
     }
 
     /**
@@ -129,8 +124,8 @@ final class Flash implements FlashInterface
      */
     public function loadMessages(&$storage): FlashInterface
     {
-        if (!is_array($storage) && !$storage instanceof ArrayAccess && !$storage instanceof ArrayObject) {
-            throw new FlashException('Load messages from storage failed. Storage must be an array or an ArrayAccess (or ArrayObject) implementation.');
+        if (!is_array($storage) && !$storage instanceof ArrayAccess) {
+            throw new FlashException('Load messages from storage failed. Storage must be an array or an ArrayAccess-implementation.');
         }
 
         $this->currentMessages = Messages::create([]);

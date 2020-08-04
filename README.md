@@ -47,7 +47,7 @@ use Psr\Container\ContainerInterface;
 return [
     // ...
     FlashInterface::class => function () {
-        $key = '_flashMessages'; // Optional, key as identifier of the flash messages
+        $key = '_flashMessages'; // Key as identifier of the flash messages
         return new Flash($key);
     },
     FlashMiddleware::class => function (ContainerInterface $container) {
@@ -94,7 +94,7 @@ return [
 ];
 ```
 
-**Please note** The storage has to be an array or ArrayAccess/ArrayObject-implementation. 
+**Please note** The storage has to be an array or an ArrayAccess-implementation. 
 
 When your DI container supports inflectors (e.g. [league/container](https://container.thephpleague.com/3.x/inflectors/)),
  you can optionally register `Neoflow/FlashMessages/FlashAwareInterface` as inflector to your container definition.
