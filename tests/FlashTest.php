@@ -5,12 +5,13 @@ namespace Neoflow\FlashMessages\Test;
 
 use ArrayObject;
 use Neoflow\FlashMessages\Flash;
+use Neoflow\FlashMessages\FlashInterface;
 use PHPUnit\Framework\TestCase;
 
 class FlashTest extends TestCase
 {
     /**
-     * @var Flash
+     * @var FlashInterface
      */
     protected $flash;
 
@@ -19,47 +20,38 @@ class FlashTest extends TestCase
         $this->flash = new Flash('_flashMessages');
 
         $_SESSION['_flashMessages'] = [
-            'm1' => [
-                '1 Message A',
-                '1 Message B'
-            ],
-            'm2' => []
+            'Message A',
+            'Message B'
         ];
 
-        $this->flash->loadMessagesFromSession();
+        $this->flash->loadFromSession();
     }
 
     public function testAddMessage(): void
     {
-        $this->flash->addMessage('m1', '1 Message A');
+        $this->flash->addMessage('1 Message A');
 
         $this->assertSame([
-            'm1' => [
-                '1 Message A',
-            ],
-        ], $this->flash->getNextMessages()->getAll());
+            '1 Message A'
+        ], $this->flash->getNextMessages());
     }
 
     public function testDirectStorageLoad(): void
     {
-        $storage = new ArrayObject([
-            '_flashMessages' => [
-                'm1' => [
+        $storage = [
+            '_foobarKey' => [
                     '1 Message A'
-                ]
             ]
-        ]);
+        ];
 
-        $flash = new Flash('_flashMessages', $storage);
+        $flash = new Flash('_foobarKey', $storage);
 
         $this->assertSame([
-            'm1' => [
                 '1 Message A'
-            ]
-        ], $flash->getCurrentMessages()->getAll());
+        ], $flash->getMessages());
 
         $this->assertSame([
-            '_flashMessages' => []
+            '_foobarKey' => []
         ], $storage);
     }
 

@@ -2,6 +2,7 @@
 
 namespace Neoflow\FlashMessages\Middleware;
 
+use Neoflow\FlashMessages\Exception\FlashException;
 use Neoflow\FlashMessages\FlashAwareInterface;
 use Neoflow\FlashMessages\FlashAwareTrait;
 use Neoflow\FlashMessages\FlashInterface;
@@ -29,7 +30,10 @@ final class FlashMiddleware implements MiddlewareInterface, FlashAwareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        $this->flash->loadMessagesFromSession();
+        if (!isset($_SESSION)) {
+            throw new FlashException('Load messages from session not possible. Session not started yet.');
+        }
+        $this->flash->load($_SESSION);
 
         return $handler->handle($request);
     }

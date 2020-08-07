@@ -57,7 +57,7 @@ return [
     // ...
 ];
 ```
-...and register the middleware, to load the session as storage for the messages. 
+...and register the middleware, to use the session as storage for the messages. 
 ```php
 use Neoflow\FlashMessages\Middleware\FlashMiddleware;
 
