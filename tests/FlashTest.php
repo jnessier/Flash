@@ -20,60 +20,54 @@ class FlashTest extends TestCase
         $this->flash = new Flash('_flashMessages');
 
         $_SESSION['_flashMessages'] = [
-            'Message A',
-            'Message B'
+            'group1' => [
+                '1 Message A',
+                '1 Message B'
+            ],
+            'group2' => []
         ];
 
-        $this->flash->loadFromSession();
+        $this->flash->load($_SESSION);
     }
 
     public function testAddMessage(): void
     {
-        $this->flash->addMessage('1 Message A');
+        $this->flash->addMessage('group1', '1 Message A');
 
-        $this->assertSame([
-            '1 Message A'
-        ], $this->flash->getNextMessages());
+        $this->assertSame($_SESSION['_flashMessages'], $this->flash->getNext());
     }
 
     public function testDirectStorageLoad(): void
     {
         $storage = [
             '_foobarKey' => [
-                    '1 Message A'
+                'Message A'
             ]
         ];
 
         $flash = new Flash('_foobarKey', $storage);
 
         $this->assertSame([
-                '1 Message A'
-        ], $flash->getMessages());
+            'Message A'
+        ], $flash->getCurrent());
 
         $this->assertSame([
             '_foobarKey' => []
         ], $storage);
     }
 
-    public function testGetCurrentMessages(): void
-    {
-        $this->assertSame([
-            'm1' => [
-                '1 Message A',
-                '1 Message B'
-            ],
-            'm2' => []
-        ], $this->flash->getCurrentMessages()->getAll());
-    }
-
     public function testGetFirstMessage(): void
     {
-        $this->assertSame('1 Message A', $this->flash->getFirstMessage('m1'));
+        $this->assertSame('1 Message A', $this->flash->getFirstMessage('group1'));
+        $this->flash->clear();
+        $this->assertSame('default', $this->flash->getFirstMessage('group1', 'default'));
     }
 
     public function testGetLastMessage(): void
     {
-        $this->assertSame('1 Message B', $this->flash->getLastMessage('m1'));
+        $this->assertSame('1 Message B', $this->flash->getLastMessage('group1'));
+        $this->flash->clear();
+        $this->assertSame('default', $this->flash->getLastMessage('group1', 'default'));
     }
 
     public function testGetMessages(): void
@@ -81,24 +75,73 @@ class FlashTest extends TestCase
         $this->assertSame([
             '1 Message A',
             '1 Message B'
-        ], $this->flash->getMessages('m1'));
-    }
-
-    public function testGetNextMessages(): void
-    {
-        $this->assertSame([], $this->flash->getNextMessages()->getAll());
-    }
-
-    public function testKeepMessages(): void
-    {
-        $this->flash->keepMessages();
+        ], $this->flash->getMessages('group1'));
 
         $this->assertSame([
-            'm1' => [
+            'Default message'
+        ], $this->flash->getMessages('group9', [
+            'Default message'
+        ]));
+    }
+
+    public function testGetNext(): void
+    {
+        $this->assertSame([], $this->flash->getNext());
+    }
+
+    public function testClear(): void
+    {
+        $this->flash->clear();
+
+        $this->assertSame([], $this->flash->getCurrent());
+        $this->assertSame([], $this->flash->getNext());
+    }
+
+
+    public function testHasMessage(): void
+    {
+        $this->flash->addMessage('group1', '1 Message A');
+
+        $this->assertTrue($this->flash->hasMessages('group1'));
+        $this->assertFalse($this->flash->hasMessages('group9'));
+    }
+
+    public function testKeep(): void
+    {
+        $this->flash->keep();
+
+        $this->assertSame([
+            'group1' => [
                 '1 Message A',
                 '1 Message B'
             ],
-            'm2' => []
+            'group2' => []
         ], $_SESSION['_flashMessages']);
+    }
+
+    public function testSetCurrent(): void
+    {
+        $this->flash->setCurrent([
+            'group9' => [
+                '9 Message Z'
+            ]
+        ]);
+
+        $this->assertSame([
+            'group9' => [
+                '9 Message Z'
+            ]
+        ], $this->flash->getCurrent());
+    }
+
+    public function testSetNext(): void
+    {
+        $this->flash->setNext([
+            'group9' => [
+                '9 Message Z'
+            ]
+        ]);
+
+        $this->assertSame($_SESSION['_flashMessages'], $this->flash->getNext());
     }
 }

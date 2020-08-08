@@ -12,9 +12,9 @@ class FlashMiddlewareTest extends TestCase
     public function test(): void
     {
         $_SESSION['_flashMessages'] = [
-            'm1' => [
-                '1 Message A'
-            ]
+                'group1' => [
+                    '1 Message A'
+                ]
         ];
 
         $flash = new Flash('_flashMessages');
@@ -23,9 +23,12 @@ class FlashMiddlewareTest extends TestCase
             new FlashMiddleware($flash),
         ]);
 
-        $flash->addMessage('m1', '1 Message Special A');
-
-        $this->assertSame('1 Message A', $flash->getFirstMessage('m1'));
-        $this->assertSame($_SESSION['_flashMessages'], $flash->getNextMessages()->getAll());
+        $this->assertSame([
+            'group1' => [
+                '1 Message A'
+            ]
+        ], $flash->getCurrent());
+        $this->assertSame($_SESSION['_flashMessages'], $flash->getNext());
+        $this->assertSame([], $_SESSION['_flashMessages']);
     }
 }

@@ -16,18 +16,18 @@ final class Flash implements FlashInterface
     /**
      * @var array
      */
-    private $currentMessages;
+    private $current;
 
     /**
      * @var array
      */
-    private $nextMessages;
+    private $next;
 
     /**
      * Constructor.
      *
-     * @param string $key Key as identifier of the messages
-     * @param array|null $storage Storage to load the messages from
+     * @param string $key Key as identifier of the message groups in the storage
+     * @param array|null $storage Storage to load the message groups from
      *
      * @throws FlashException
      */
@@ -43,9 +43,13 @@ final class Flash implements FlashInterface
     /**
      * {@inheritDoc}
      */
-    public function addMessage($message): FlashInterface
+    public function addMessage(string $key, $message): FlashInterface
     {
-        $this->nextMessages[] = $message;
+        if (!isset($this->next[$key])) {
+            $this->next[$key] = [];
+        }
+
+        $this->next[$key] = $message;
 
         return $this;
     }
@@ -53,18 +57,51 @@ final class Flash implements FlashInterface
     /**
      * {@inheritDoc}
      */
-    public function getMessages(): array
+    public function clear(): FlashInterface
     {
-        return $this->currentMessages;
+        $this->current = [];
+        $this->next = [];
+
+        return $this;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function getFirstMessage($default = null)
+    public function countMessages(string $key): int
     {
-        if ($this->countMessages() > 0) {
-            return $this->currentMessages[0];
+        if ($this->hasMessages($key)) {
+            return count($this->current);
+        }
+
+        return 0;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getCurrent(): array
+    {
+        return $this->current;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setCurrent(array $groups): FlashInterface
+    {
+        $this->current = $groups;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getFirstMessage(string $key, $default = null)
+    {
+        if ($this->countMessages($key) > 0) {
+            return $this->current[$key][0];
         }
 
         return $default;
@@ -73,12 +110,12 @@ final class Flash implements FlashInterface
     /**
      * {@inheritDoc}
      */
-    public function getLastMessage($default = null)
+    public function getLastMessage(string $key, $default = null)
     {
-        $numberOfMessages = $this->countMessages();
+        $numberOfMessages = $this->countMessages($key);
         if ($numberOfMessages > 0) {
             $lastIndex = $numberOfMessages - 1;
-            return $this->currentMessages[$lastIndex];
+            return $this->current[$key][$lastIndex];
         }
 
         return $default;
@@ -87,17 +124,47 @@ final class Flash implements FlashInterface
     /**
      * {@inheritDoc}
      */
-    public function getNextMessages(): array
+    public function getMessages(string $key, $default = []): array
     {
-        return $this->nextMessages;
+        if ($this->hasMessages($key)) {
+            return $this->current[$key];
+        }
+
+        return $default;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function keepMessages(): FlashInterface
+    public function getNext(): array
     {
-        $this->nextMessages = $this->currentMessages;
+        return $this->next;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setNext(array $groups): FlashInterface
+    {
+        $this->next = $groups;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function hasMessages(string $key): bool
+    {
+        return isset($this->current[$key]);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function keep(): FlashInterface
+    {
+        $this->next = $this->current;
 
         return $this;
     }
@@ -113,47 +180,14 @@ final class Flash implements FlashInterface
             if (!is_array($storage[$this->key])) {
                 throw new FlashException('Load messages from storage failed. Key "' . $this->key . '" for flash messages found, but value is not an array.');
             }
-            $this->currentMessages = $storage[$this->key];
+            $this->current = $storage[$this->key];
         }
 
         $storage[$this->key] = [];
 
-        $this->nextMessages = &$storage[$this->key];
+        $this->next = &$storage[$this->key];
 
         return $this;
     }
 
-
-    /**
-     * {@inheritDoc}
-     */
-    public function countMessages(): int
-    {
-        return count($this->currentMessages);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setCurrentMessages(array $messages): FlashInterface
-    {
-        $this->currentMessages = $messages;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setMessages(array $messages): FlashInterface
-    {
-        $this->nextMessages = $messages;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function clearMessages(): FlashInterface
-    {
-        $this->currentMessages = [];
-        $this->nextMessages = [];
-    }
 }

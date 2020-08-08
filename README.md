@@ -26,11 +26,7 @@ Via Composer...
 ```bash
 composer require neoflow/flash-messages
 ```
-
-...or manually add this line to the `require` block in your `composer.json`:
-```json
-"neoflow/flash-messages": "^0.0.1"
-```
+...or manually download the latest release from [here](https://github.com/Neoflow/Session/releases/).
 
 ## Configuration
 The following instructions based on [Slim 4](http://www.slimframework.com), in combination with
@@ -47,7 +43,7 @@ use Psr\Container\ContainerInterface;
 return [
     // ...
     FlashInterface::class => function () {
-        $key = '_flashMessages'; // Key as identifier of the flash messages
+        $key = '_flashMessages'; // Key as identifier of the messages in the storage
         return new Flash($key);
     },
     FlashMiddleware::class => function (ContainerInterface $container) {
@@ -65,12 +61,11 @@ $app->add(FlashMiddleware::class);
 ```
 **Please note** The session has to start first, before the middleware can get successfully dispatched. 
 
-Alternatively, you can also load the storage of the flash messages with a closure middleware from another source than
- the session...
+Alternatively, you can also load messages from another storage than the session with a closure middleware...
 ```php
 $app->add(function ($request, $handler) use ($container) {
-    $storage = [ // Flash messages storage
-        '_flashMessages' => []
+    $storage = [ 
+        // Your custom storage of the messages
     ];
     $container->get(FlashInterface::class)->loadMessages($storage);
     return $handler->handle($request);
@@ -84,17 +79,15 @@ use Neoflow\FlashMessages\FlashInterface;
 return [
     // ...
     FlashInterface::class => function () {
-        $key = '_flashMessages'; // Key as identifier of the flash messages
-        $storage = [ // Flash messages storage
-            '_flashMessages' => []
+        $key = '_flashMessages'; // Key as identifier of the messages in the storage
+        $storage = [
+            // Your custom storage of the messages
         ];
         return new Flash($key, $storage);
     },
     // ...
 ];
 ```
-
-**Please note** The storage has to be an array or an ArrayAccess-implementation. 
 
 When your DI container supports inflectors (e.g. [league/container](https://container.thephpleague.com/3.x/inflectors/)),
  you can optionally register `Neoflow/FlashMessages/FlashAwareInterface` as inflector to your container definition.
@@ -103,93 +96,57 @@ Additionally, you can also use `Neoflow/FlashMessages/FlashAwareTrait` as a shor
  `Neoflow/FlashMessages/FlashAwareInterface`.
 
 ## Usage
-The service `Neoflow\FlashMessages\Flash` provides the most needed methods to access the messages for the
- current request and to add the messages for the next request.
+The service `Neoflow\FlashMessages\Flash` provides the most needed methods to get access to the messages for the
+ current request and to add messages for the next request.
 ```php
-// Add message by key for the next request.
-$flash = $flash->addMessage('key', 'Your message.');
+// Add message to a message group by key for next request.
+$key = 'key'; // Key as identifier of the message group
+$flash = $flash->addMessage($key, 'Your custom message');
 
-// Get messages by key, set for the current request.
-$messages = $flash->getMessages('key');
+// Get message group by key, set for current request.
+$default = []; // Default value, when message group doesn't exists or is empty (default: [])
+$messages = $flash->getMessages($key, $default);
 
-// Get first message by key, set for the current request, or default when no message exists.
-$default = []; // Optional (default: null)
-$firstMessage = $flash->getLastMessage('key', $default);
+// Check whether message group by key exists.
+$exists = $flash->hasMessages($key);
 
-// Get last message by key, set for the current request, or default when no message exists.
-$default = []; // Optional (default: null)
+// Count number of messages of a message group by key, set for current request.
+$numberOfMessages = $flash->countMessages($key);
+
+// Get first message from a message group by key, set for current request.
+$default = null; // Default value, when message group doesn't exists or is empty (default: null)
+$firstMessage = $flash->getFirstMessage('key', $default);
+
+// Get last message from a message group by key, set for current request.
 $lastMessage = $flash->getLastMessage('key', $default);
 
-// Keep messages, set for the current request, for the next request too.  
-// Note: Already added messages will be overwritten.
-$flash = $flash->keepMessages(); 
+// Clear messages of current and next request.
+$flash = $flash->clear();
+
+// Keep current message groups for next request. Existing message groups will be overwritten.
+$flash = $flash->keep(); 
 
 // Load messages from storage as reference.
 $storage = [
     '_flashMessages' => []
 ];
-$flash = $flash->loadMessages($storage);
-
-// Load messages from session ($_SESSION).
-$flash = $flash->loadMessagesFromSession();
+$flash = $flash->load($storage);
 ```
 
-You can also get the handler `Neoflow\FlashMessages\Messages` for each messages type.
+For more advanced use cases, you can also get and set the messages groups for current and next request.
 ```php
-// Get handler with messages, set for the next request. Returns `Neoflow\FlashMessages\Messages`.
-$handler = $flash->getNextMessages();
-  
-// Get handler with messages, set for the current request. Returns `Neoflow\FlashMessages\Messages`.
-$handler = $flash->getCurrentMessages();
+// Get message groups, set for next request.
+$nextMessageGroups = $flash->getNext();
+
+// Set message groups for next request. Existing message groups will be overwritten.
+$flash = $flash->setNext($nextMessageGroups);
+
+// Get message groups, set for current request.
+$currentMessageGroups = $flash->getCurrent();
+
+// Set message groups for current request. Existing message groups will be overwritten.
+$flash = $flash->setCurrent($currentMessageGroups);
 ```
-
-The handler provides a complete set of methods to access and manipulate the messages.
-```php
-// Add message by key.
-$handler = $handler->add('key', 'Your messages');
-
-// Clear messages by key.
-$handler->clear('key');
-
-// Clear all messages.
-$handler->clearAll();
-
-// Count number of messages by key.
-$numberOfMessages = $handler->count('key');
-
-// Get messages by key, or default value when no message exists.
-$default = []; // Optional (default: [])
-$messages = $handler->get('key', $default);
-
-// Get all messages.
-$messages = $handler->getAll();
-
-// Get first message by key, or default value when no message exists.
-$default = 'Default first message'; // Optional (default: null)
-$firstMessage = $handler->getFirst('key', $default);
-
-// Get last message by key, or default value when no message exists.
-$default = 'Default last message'; // Optional (default: null)
-$lastMessage = $handler->getLast('key', $default);
-    
-// Check whether messages by key exists.
-$keyExists = $handler->has('key');
-
-// Set messages. Already set messages will be overwritten.
-$handler = $handler->set([
-    'key' => [
-        'Your message'
-    ]
-]);
-
-// Set referenced messages. Already set messages will be overwritten.
-$messages = [
-    'key' => [
-        'Your message'
-    ]
-];
-$handler = $handler->setReference($messages);
-``` 
   
 ## Contributors
 * Jonathan Nessier, [Neoflow](https://www.neoflow.ch)

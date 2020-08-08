@@ -3,13 +3,15 @@
 
 namespace Neoflow\FlashMessages\Test;
 
+use Middlewares\Utils\Dispatcher;
 use Neoflow\FlashMessages\Exception\FlashException;
 use Neoflow\FlashMessages\Flash;
+use Neoflow\FlashMessages\Middleware\FlashMiddleware;
 use PHPUnit\Framework\TestCase;
 
 class FlashExceptionTest extends TestCase
 {
-    public function testInvalidMessagesFromStorageLoad(): void
+    public function testLoadInvalid(): void
     {
         $this->expectException(FlashException::class);
         $this->expectExceptionMessage('Load messages from storage failed. Key "_flashMessages" for flash messages found, but value is not an array.');
@@ -17,40 +19,18 @@ class FlashExceptionTest extends TestCase
         $invalidStorage = [
             '_flashMessages' => 'foo bar'
         ];
-        (new Flash())->loadMessages($invalidStorage);
+        (new Flash())->load($invalidStorage);
     }
 
-    public function testInvalidMessagesLoadFromSession(): void
-    {
+    public function testLoadSessionInvalid(): void {
         $this->expectException(FlashException::class);
-        $this->expectExceptionMessage('Load messages from session failed. Session not started yet.');
+        $this->expectExceptionMessage('oad messages from session not possible. Session not started yet.');
 
-        unset($_SESSION);
-        (new Flash())->loadMessagesFromSession();
+        $flash = new Flash('_flashMessages');
+
+        Dispatcher::run([
+            new FlashMiddleware($flash),
+        ]);
     }
 
-    public function testInvalidStorageLoad(): void
-    {
-        $this->expectException(FlashException::class);
-        $this->expectExceptionMessage('Load messages from storage failed. Storage must be an array or an ArrayAccess-implementation.');
-
-        $invalidStorage = 'foo bar';
-        (new Flash())->loadMessages($invalidStorage);
-    }
-
-    public function testNotLoadedCurrentMessages(): void
-    {
-        $this->expectException(FlashException::class);
-        $this->expectExceptionMessage('Messages for current request does not exists. Messages not loaded from storage yet.');
-
-        (new Flash())->getCurrentMessages();
-    }
-
-    public function testNotLoadedNextMessages(): void
-    {
-        $this->expectException(FlashException::class);
-        $this->expectExceptionMessage('Messages for next request does not exists. Messages not loaded from storage yet.');
-
-        (new Flash())->getNextMessages();
-    }
 }
