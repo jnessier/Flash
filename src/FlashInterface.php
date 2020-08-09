@@ -3,7 +3,6 @@
 
 namespace Neoflow\FlashMessages;
 
-
 interface FlashInterface
 {
     /**
@@ -67,7 +66,7 @@ interface FlashInterface
      *
      * @return array
      */
-    public function getMessages(string $key,  $default = []): array;
+    public function getMessages(string $key, $default = []): array;
 
     /**
      * Get message groups, set for next request.

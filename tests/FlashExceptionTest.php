@@ -22,7 +22,8 @@ class FlashExceptionTest extends TestCase
         (new Flash())->load($invalidStorage);
     }
 
-    public function testLoadSessionInvalid(): void {
+    public function testLoadSessionInvalid(): void
+    {
         $this->expectException(FlashException::class);
         $this->expectExceptionMessage('oad messages from session not possible. Session not started yet.');
 
@@ -32,5 +33,4 @@ class FlashExceptionTest extends TestCase
             new FlashMiddleware($flash),
         ]);
     }
-
 }

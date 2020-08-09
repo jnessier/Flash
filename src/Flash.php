@@ -189,5 +189,4 @@ final class Flash implements FlashInterface
 
         return $this;
     }
-
 }
