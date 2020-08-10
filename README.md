@@ -5,13 +5,14 @@
 [![Total Downloads](https://poser.pugx.org/neoflow/flash-messages/downloads?service=github)](//packagist.org/packages/neoflow/flash-messages)
 [![License](https://poser.pugx.org/neoflow/flash-messages/license?service=github)](https://packagist.org/packages/neoflow/flash-messages)
 
-Flash messages service for Slim 4 and similar PSR-15 compliant frameworks or apps.
+Flash message service for Slim 4 and similar [PSR-15](https://www.php-fig.org/psr/psr-15/) compliant frameworks and apps.
 
 ## Table of Contents
 - [Requirement](#requirement)
 - [Installation](#installation)
 - [Configuration](#configuration)
 - [Usage](#usage)
+- [Session](#session)
 - [Contributors](#contributors)
 - [History](#history)
 - [License](#license)
@@ -147,6 +148,14 @@ $currentMessageGroups = $flash->getCurrent();
 // Set message groups for current request. Existing message groups will be overwritten.
 $flash = $flash->setCurrent($currentMessageGroups);
 ```
+
+## Session
+In earlier times, this library was part of [Neoflow\Session](https://github.com/Neoflow/Session) and the moved into a
+ standalone library, to comply with the design principle of separation of concerns.
+
+If you want to use a session service, you can easily combine both libraries as composer packages. 
+The integration and usage of [Neoflow\Session](https://github.com/Neoflow/Session) is very similar to the
+ current library.
   
 ## Contributors
 * Jonathan Nessier, [Neoflow](https://www.neoflow.ch)
