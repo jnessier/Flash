@@ -150,7 +150,7 @@ $flash = $flash->setCurrent($currentMessageGroups);
 ```
 
 ## Session
-In earlier times, this library was part of [Neoflow\Session](https://github.com/Neoflow/Session) and the moved into a
+In earlier times, this library was part of [Neoflow\Session](https://github.com/Neoflow/Session) and then moved into a
  standalone library, to comply with the design principle of separation of concerns.
 
 If you want to use a session service, you can easily combine both libraries as composer packages. 
