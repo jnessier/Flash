@@ -49,7 +49,7 @@ final class Flash implements FlashInterface
             $this->next[$key] = [];
         }
 
-        $this->next[$key] = $message;
+        $this->next[$key][] = $message;
 
         return $this;
     }

@@ -32,9 +32,13 @@ class FlashTest extends TestCase
 
     public function testAddMessage(): void
     {
-        $this->flash->addMessage('group1', '1 Message A');
+        $this->flash->addMessage('newGroup1', '1 Message A');
 
-        $this->assertSame($_SESSION['_flashMessages'], $this->flash->getNext());
+        $next = $this->flash->getNext();
+
+        $this->assertSame([
+            '1 Message A'
+        ], $next['newGroup1']);
     }
 
     public function testDirectStorageLoad(): void
