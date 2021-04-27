@@ -41,6 +41,25 @@ class FlashTest extends TestCase
         ], $next['newGroup1']);
     }
 
+    public function testAddCurrentMessage(): void
+    {
+        $this->flash->addCurrentMessage('group1', '1 Message C');
+        $this->flash->addCurrentMessage('group3', '3 Message A');
+
+        $current = $this->flash->getCurrent();
+
+        $this->assertSame([
+            '1 Message A',
+            '1 Message B',
+            '1 Message C',
+        ], $current['group1']);
+
+        $this->assertSame([
+            '3 Message A',
+        ], $current['group3']);
+    }
+
+
     public function testDirectStorageLoad(): void
     {
         $storage = [

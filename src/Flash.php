@@ -3,7 +3,6 @@
 
 namespace Neoflow\FlashMessages;
 
-use ArrayAccess;
 use Neoflow\FlashMessages\Exception\FlashException;
 
 final class Flash implements FlashInterface
@@ -50,6 +49,20 @@ final class Flash implements FlashInterface
         }
 
         $this->next[$key][] = $message;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function addCurrentMessage(string $key, $message): FlashInterface
+    {
+        if (!isset($this->current[$key])) {
+            $this->current[$key] = [];
+        }
+
+        $this->current[$key][] = $message;
 
         return $this;
     }

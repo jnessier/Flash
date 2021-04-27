@@ -100,7 +100,7 @@ Additionally, you can also use `Neoflow/FlashMessages/FlashAwareTrait` as a shor
 The service `Neoflow\FlashMessages\Flash` provides the most needed methods to get access to the messages for the
  current request and to add messages for the next request.
 ```php
-// Add message to a message group by key for next request.
+// Add message to a message group by key for the next request.
 $key = 'key'; // Key as identifier of the message group
 $flash = $flash->addMessage($key, 'Your custom message');
 
@@ -120,6 +120,10 @@ $firstMessage = $flash->getFirstMessage('key', $default);
 
 // Get last message from a message group by key, set for current request.
 $lastMessage = $flash->getLastMessage('key', $default);
+
+// Add message to a message group by key for the current request.
+$key = 'key'; // Key as identifier of the message group
+$flash = $flash->addCurrentMessage($key, 'Your custom message');
 
 // Clear messages of current and next request.
 $flash = $flash->clear();

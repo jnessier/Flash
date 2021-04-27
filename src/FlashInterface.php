@@ -6,7 +6,7 @@ namespace Neoflow\FlashMessages;
 interface FlashInterface
 {
     /**
-     * Add message to a message group by key for next request.
+     * Add message to a message group by key for the next request.
      *
      * @param string $key Key as identifier of the message group
      * @param mixed $message Message to add
@@ -14,6 +14,16 @@ interface FlashInterface
      * @return self
      */
     public function addMessage(string $key, $message): FlashInterface;
+
+    /**
+     * Add message to a message group by key for the current request.
+     *
+     * @param string $key Key as identifier of the message group
+     * @param mixed $message Message to add
+     *
+     * @return self
+     */
+    public function addCurrentMessage(string $key, $message): FlashInterface;
 
     /**
      * Clear messages of current and next request.
