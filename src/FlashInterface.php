@@ -72,7 +72,7 @@ interface FlashInterface
      * Get message group by key, set for current request.
      *
      * @param string $key Key as identifier of the message group
-     * @param mixed $default Default value, when message group doesn't exists or is empty
+     * @param mixed $default Default value, when message group doesn't exist or is empty
      *
      * @return array
      */
