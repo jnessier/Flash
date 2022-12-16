@@ -1,6 +1,6 @@
 {
-  "name": "neoflow/flash-messages",
-  "description": "Flash message service for Slim 4 and similar PSR-15 compliant frameworks and apps.",
+  "name": "neoflow/flash",
+  "description": "Flash service for Slim 4 and similar PSR-15 compliant frameworks and apps.",
   "license": "MIT",
   "minimum-stability": "stable",
   "authors": [
@@ -11,12 +11,12 @@
   ],
   "autoload": {
     "psr-4": {
-      "Neoflow\\FlashMessages\\": "src/"
+      "Neoflow\\Flash\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Neoflow\\FlashMessages\\Test\\": "tests/"
+      "Neoflow\\Flash\\Test\\": "tests/"
     }
   },
   "scripts": {

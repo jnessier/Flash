@@ -1,11 +1,10 @@
-# FlashMessages
-[![Build Status](https://travis-ci.org/Neoflow/FlashMessages.svg?branch=master&service=github)](https://travis-ci.org/Neoflow/FlashMessages)
-[![Coverage Status](https://coveralls.io/repos/github/Neoflow/FlashMessages/badge.svg?branch=master&service=github)](https://coveralls.io/github/Neoflow/FlashMessages?branch=master)
-[![Latest Stable Version](https://poser.pugx.org/neoflow/flash-messages/v?service=github)](https://packagist.org/packages/neoflow/flash-messages)
-[![Total Downloads](https://poser.pugx.org/neoflow/flash-messages/downloads?service=github)](//packagist.org/packages/neoflow/flash-messages)
-[![License](https://poser.pugx.org/neoflow/flash-messages/license?service=github)](https://packagist.org/packages/neoflow/flash-messages)
+# Flash
+[![Build Status](https://github.com/neoflow/flash/workflows/Tests/badge.svg)](https://github.com/neoflow/flash/actions?query=branch:4.x)
+[![Latest Stable Version](https://poser.pugx.org/neoflow/flash/v?service=github)](https://packagist.org/packages/neoflow/flash)
+[![Total Downloads](https://poser.pugx.org/neoflow/flash/downloads?service=github)](//packagist.org/packages/neoflow/flash)
+[![License](https://poser.pugx.org/neoflow/flash/license?service=github)](https://packagist.org/packages/neoflow/flash)
 
-Flash message service for Slim 4 and similar [PSR-15](https://www.php-fig.org/psr/psr-15/) compliant frameworks and apps.
+Flash service for Slim 4 and similar [PSR-15](https://www.php-fig.org/psr/psr-15/) compliant frameworks and apps.
 
 ## Table of Contents
 - [Requirement](#requirement)
@@ -25,7 +24,7 @@ You have 2 options to install this library.
 
 Via Composer...
 ```bash
-composer require neoflow/flash-messages
+composer require neoflow/flash
 ```
 ...or manually download the latest release from [here](https://github.com/Neoflow/Session/releases/).
 
@@ -33,18 +32,18 @@ composer require neoflow/flash-messages
 The following instructions based on [Slim 4](http://www.slimframework.com), in combination with
  [PHP-DI](https://php-di.org), but should be adaptable for any PSR-11/PSR-15 compliant frameworks and libraries.
 
-Add the service `Neoflow\FlashMessages\Flash` and middleware `Neoflow\FlashMessages\Middleware\FlashMiddleware`
+Add the service `Neoflow\Flash\Flash` and middleware `Neoflow\Flash\Middleware\FlashMiddleware`
  to the container definitions...
 ```php
-use Neoflow\FlashMessages\Flash;
-use Neoflow\FlashMessages\FlashInterface;
-use Neoflow\FlashMessages\Middleware\FlashMiddleware;
+use Neoflow\Flash\Flash;
+use Neoflow\Flash\FlashInterface;
+use Neoflow\Flash\Middleware\FlashMiddleware;
 use Psr\Container\ContainerInterface;
 
 return [
     // ...
     FlashInterface::class => function () {
-        $key = '_flashMessages'; // Key as identifier of the messages in the storage
+        $key = '_flash'; // Key as identifier of the values in the storage
         return new Flash($key);
     },
     FlashMiddleware::class => function (ContainerInterface $container) {
@@ -54,35 +53,35 @@ return [
     // ...
 ];
 ```
-...and register the middleware, to use the session as storage for the messages. 
+...and register the middleware, to use the session as storage for the values. 
 ```php
-use Neoflow\FlashMessages\Middleware\FlashMiddleware;
+use Neoflow\Flash\Middleware\FlashMiddleware;
 
 $app->add(FlashMiddleware::class);
 ```
 **Please note** The session has to start first, before the middleware can get successfully dispatched. 
 
-Alternatively, you can also load messages from another storage than the session with a closure middleware...
+Alternatively, you can also load values from another storage than the session with a closure middleware...
 ```php
 $app->add(function ($request, $handler) use ($container) {
     $storage = [ 
-        // Your custom storage of the messages
+        // Your custom storage of the values
     ];
-    $container->get(FlashInterface::class)->loadMessages($storage);
+    $container->get(FlashInterface::class)->load($storage);
     return $handler->handle($request);
 });
 ```
 ...or add it directly in the container definitions and skip the middleware.
 ```php
-use Neoflow\FlashMessages\Flash;
-use Neoflow\FlashMessages\FlashInterface;
+use Neoflow\Flash\Flash;
+use Neoflow\Flash\FlashInterface;
 
 return [
     // ...
     FlashInterface::class => function () {
-        $key = '_flashMessages'; // Key as identifier of the messages in the storage
+        $key = '_flash'; // Key as identifier of the values in the storage
         $storage = [
-            // Your custom storage of the messages
+            // Your custom storage of the values
         ];
         return new Flash($key, $storage);
     },
@@ -91,71 +90,67 @@ return [
 ```
 
 When your DI container supports inflectors (e.g. [league/container](https://container.thephpleague.com/3.x/inflectors/)),
- you can optionally register `Neoflow/FlashMessages/FlashAwareInterface` as inflector to your container definition.
+ you can optionally register `Neoflow/Flash/FlashAwareInterface` as inflector to your container definition.
 
-Additionally, you can also use `Neoflow/FlashMessages/FlashAwareTrait` as a shorthand implementation of
- `Neoflow/FlashMessages/FlashAwareInterface`.
+Additionally, you can also use `Neoflow/Flash/FlashAwareTrait` as a shorthand implementation of
+ `Neoflow/Flash/FlashAwareInterface`.
 
 ## Usage
-The service `Neoflow\FlashMessages\Flash` provides the most needed methods to get access to the messages for the
- current request and to add messages for the next request.
+The service `Neoflow\Flash\Flash` provides the most needed methods to get access to the values for the
+ current request and to add values for the next request.
 ```php
-// Add message to a message group by key for the next request.
-$key = 'key'; // Key as identifier of the message group
-$flash = $flash->addMessage($key, 'Your custom message');
+// Set a value by key for the next request.
+$key = 'key'; // Key as identifier of the value
+$flash = $flash->set($key, 'Your custom value');
 
-// Get message group by key, set for current request.
-$default = []; // Default value, when message group doesn't exists or is empty (default: [])
-$messages = $flash->getMessages($key, $default);
+// Get value by key, set for current request.
+$default = null; // Default value, when value doesn't exists or is empty (default: null)
+$value = $flash->get($key, $default);
 
-// Check whether message group by key exists.
-$exists = $flash->hasMessages($key);
+// Check whether value by key for current request exists.
+$exists = $flash->has($key);
 
-// Count number of messages of a message group by key, set for current request.
-$numberOfMessages = $flash->countMessages($key);
+// Count number of values for current request.
+$numberOfValues = $flash->count();
 
-// Get first message from a message group by key, set for current request.
-$default = null; // Default value, when message group doesn't exists or is empty (default: null)
-$firstMessage = $flash->getFirstMessage('key', $default);
-
-// Get last message from a message group by key, set for current request.
-$lastMessage = $flash->getLastMessage('key', $default);
-
-// Add message to a message group by key for the current request.
-$key = 'key'; // Key as identifier of the message group
-$flash = $flash->addCurrentMessage($key, 'Your custom message');
-
-// Clear messages of current and next request.
+// Clear values of current and next request.
 $flash = $flash->clear();
 
-// Keep current message groups for next request. Existing message groups will be overwritten.
+// Keep current values for next request. Existing values will be overwritten.
 $flash = $flash->keep(); 
 
-// Load messages from storage as reference.
+// Load values from storage as reference.
 $storage = [
-    '_flashMessages' => []
+    '_flash' => []
 ];
 $flash = $flash->load($storage);
 ```
 
-For more advanced use cases, you can also get and set the messages groups for current and next request.
+For more advanced use cases, you can also get and set the values for current and next request.
 ```php
-// Get message groups, set for next request.
-$nextMessageGroups = $flash->getNext();
+// Get values set for next request.
+$nextValues = $flash->getNext();
 
-// Set message groups for next request. Existing message groups will be overwritten.
-$flash = $flash->setNext($nextMessageGroups);
+// Set values for next request. Existing values will be overwritten.
+$flash = $flash->setNext([
+    'key1' => 'value1'
+]);
 
-// Get message groups, set for current request.
-$currentMessageGroups = $flash->getCurrent();
+// Get values set for current request.
+$currentValues = $flash->getCurrent();
 
-// Set message groups for current request. Existing message groups will be overwritten.
-$flash = $flash->setCurrent($currentMessageGroups);
+// Set values for current request. Existing values will be overwritten.
+$flash = $flash->setCurrent([
+    'key1' => 'value1'
+]);
 ```
 
-## Session
-In earlier times, this library was part of [Neoflow\Session](https://github.com/Neoflow/Session) and then moved into a
- standalone library, to comply with the design principle of separation of concerns.
+## Nice to know
+Version 2.0 has been simplified and the message handling implementation has been removed. If you need the message
+ handling please keep using version 1.2.
+
+In earlier times, the library was also part of [Neoflow\Session](https://github.com/Neoflow/Session) and then moved 
+ into a standalone library, to comply with the design principle of separation of concerns.
 
 If you want to use a session service, you can easily combine both libraries as composer packages. 
 The integration and usage of [Neoflow\Session](https://github.com/Neoflow/Session) is very similar to the
@@ -168,14 +163,6 @@ If you would like to see this library develop further, or if you want to support
  donate any amount through PayPal. Thank you! :beers:
  
 [![Donate](https://img.shields.io/badge/Donate-paypal-blue)](https://www.paypal.me/JonathanNessier)
-
-## History
-Slim offers with [Slim-Flash](https://github.com/slimphp/Slim-Flash) as standalone library for flash
- messages.
-Unfortunately the library looks a little bit abandoned on GitHub, has no interfaces implemented and doesn't provide a 
- complete set of methods to access and manipulate both types of messages.
-This circumstance led me to develop this PSR-15 compliant flash messages service for Slim 4.
-Inspired by the slimness of the framework itself.
 
 ## License
 Licensed under [MIT](LICENSE). 

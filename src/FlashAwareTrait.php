@@ -1,19 +1,19 @@
 <?php
 
-namespace Neoflow\FlashMessages;
+namespace Neoflow\Flash;
 
 trait FlashAwareTrait
 {
-
     /**
      * @var FlashInterface
      */
     protected $flash;
 
     /**
-     * Set flash messages service
+     * Set flash service
      *
      * @param FlashInterface $flash
+     *
      * @return void
      */
     public function setFlash(FlashInterface $flash): void

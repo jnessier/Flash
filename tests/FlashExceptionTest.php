@@ -1,12 +1,12 @@
 <?php
 
 
-namespace Neoflow\FlashMessages\Test;
+namespace Neoflow\Flash\Test;
 
 use Middlewares\Utils\Dispatcher;
-use Neoflow\FlashMessages\Exception\FlashException;
-use Neoflow\FlashMessages\Flash;
-use Neoflow\FlashMessages\Middleware\FlashMiddleware;
+use Neoflow\Flash\Exception\FlashException;
+use Neoflow\Flash\Flash;
+use Neoflow\Flash\Middleware\FlashMiddleware;
 use PHPUnit\Framework\TestCase;
 
 class FlashExceptionTest extends TestCase
@@ -14,10 +14,10 @@ class FlashExceptionTest extends TestCase
     public function testLoadInvalid(): void
     {
         $this->expectException(FlashException::class);
-        $this->expectExceptionMessage('Load messages from storage failed. Key "_flashMessages" for flash messages found, but value is not an array.');
+        $this->expectExceptionMessage('Load values from storage failed. Key "_flash" for values found, but it is not an array.');
 
         $invalidStorage = [
-            '_flashMessages' => 'foo bar'
+            '_flash' => 'foo bar'
         ];
         (new Flash())->load($invalidStorage);
     }
@@ -25,9 +25,9 @@ class FlashExceptionTest extends TestCase
     public function testLoadSessionInvalid(): void
     {
         $this->expectException(FlashException::class);
-        $this->expectExceptionMessage('oad messages from session not possible. Session not started yet.');
+        $this->expectExceptionMessage('Load values from session not possible. Session not started yet.');
 
-        $flash = new Flash('_flashMessages');
+        $flash = new Flash('_flash');
 
         Dispatcher::run([
             new FlashMiddleware($flash),

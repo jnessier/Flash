@@ -1,9 +1,9 @@
 <?php
 
 
-namespace Neoflow\FlashMessages;
+namespace Neoflow\Flash;
 
-use Neoflow\FlashMessages\Exception\FlashException;
+use Neoflow\Flash\Exception\FlashException;
 
 final class Flash implements FlashInterface
 {
@@ -25,46 +25,18 @@ final class Flash implements FlashInterface
     /**
      * Constructor.
      *
-     * @param string $key Key as identifier of the message groups in the storage
-     * @param array|null $storage Storage to load the message groups from
+     * @param string $key Key as identifier of the values in the storage
+     * @param array|null $storage Storage to load the values from
      *
      * @throws FlashException
      */
-    public function __construct(string $key = '_flashMessages', array &$storage = null)
+    public function __construct(string $key = '_flash', array &$storage = null)
     {
         $this->key = $key;
 
         if (!is_null($storage)) {
             $this->load($storage);
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function addMessage(string $key, $message): FlashInterface
-    {
-        if (!isset($this->next[$key])) {
-            $this->next[$key] = [];
-        }
-
-        $this->next[$key][] = $message;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function addCurrentMessage(string $key, $message): FlashInterface
-    {
-        if (!isset($this->current[$key])) {
-            $this->current[$key] = [];
-        }
-
-        $this->current[$key][] = $message;
-
-        return $this;
     }
 
     /**
@@ -81,13 +53,9 @@ final class Flash implements FlashInterface
     /**
      * {@inheritDoc}
      */
-    public function countMessages(string $key): int
+    public function count(): int
     {
-        if ($this->hasMessages($key)) {
-            return count($this->current);
-        }
-
-        return 0;
+        return count($this->current);
     }
 
     /**
@@ -101,9 +69,9 @@ final class Flash implements FlashInterface
     /**
      * {@inheritDoc}
      */
-    public function setCurrent(array $groups): FlashInterface
+    public function setCurrent(array $values): FlashInterface
     {
-        $this->current = $groups;
+        $this->current = $values;
 
         return $this;
     }
@@ -111,39 +79,35 @@ final class Flash implements FlashInterface
     /**
      * {@inheritDoc}
      */
-    public function getFirstMessage(string $key, $default = null)
+    public function get(string $key, $default = null): array
     {
-        if ($this->countMessages($key) > 0) {
-            return $this->current[$key][0];
-        }
-
-        return $default;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getLastMessage(string $key, $default = null)
-    {
-        $numberOfMessages = $this->countMessages($key);
-        if ($numberOfMessages > 0) {
-            $lastIndex = $numberOfMessages - 1;
-            return $this->current[$key][$lastIndex];
-        }
-
-        return $default;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getMessages(string $key, $default = []): array
-    {
-        if ($this->hasMessages($key)) {
+        if ($this->has($key)) {
             return $this->current[$key];
         }
 
         return $default;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function set(string $key, $value): FlashInterface
+    {
+        $this->next[$key] = $value;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function remove(string $key): FlashInterface
+    {
+        if (isset($this->next[$key])) {
+            unset($this->next[$key]);
+        }
+
+        return $this;
     }
 
     /**
@@ -157,9 +121,9 @@ final class Flash implements FlashInterface
     /**
      * {@inheritDoc}
      */
-    public function setNext(array $groups): FlashInterface
+    public function setNext(array $values): FlashInterface
     {
-        $this->next = $groups;
+        $this->next = $values;
 
         return $this;
     }
@@ -167,7 +131,7 @@ final class Flash implements FlashInterface
     /**
      * {@inheritDoc}
      */
-    public function hasMessages(string $key): bool
+    public function has(string $key): bool
     {
         return isset($this->current[$key]);
     }
@@ -191,7 +155,9 @@ final class Flash implements FlashInterface
     {
         if (isset($storage[$this->key])) {
             if (!is_array($storage[$this->key])) {
-                throw new FlashException('Load messages from storage failed. Key "' . $this->key . '" for flash messages found, but value is not an array.');
+                throw new FlashException(
+                    'Load values from storage failed. Key "' . $this->key . '" for values found, but it is not an array.'
+                );
             }
             $this->current = $storage[$this->key];
         }

@@ -1,23 +1,23 @@
 <?php
 
-namespace Neoflow\FlashMessages\Test;
+namespace Neoflow\Flash\Test;
 
 use Middlewares\Utils\Dispatcher;
-use Neoflow\FlashMessages\Flash;
-use Neoflow\FlashMessages\Middleware\FlashMiddleware;
+use Neoflow\Flash\Flash;
+use Neoflow\Flash\Middleware\FlashMiddleware;
 use PHPUnit\Framework\TestCase;
 
 class FlashMiddlewareTest extends TestCase
 {
     public function test(): void
     {
-        $_SESSION['_flashMessages'] = [
+        $_SESSION['_flash'] = [
                 'group1' => [
                     '1 Message A'
                 ]
         ];
 
-        $flash = new Flash('_flashMessages');
+        $flash = new Flash('_flash');
 
         Dispatcher::run([
             new FlashMiddleware($flash),
@@ -28,7 +28,7 @@ class FlashMiddlewareTest extends TestCase
                 '1 Message A'
             ]
         ], $flash->getCurrent());
-        $this->assertSame($_SESSION['_flashMessages'], $flash->getNext());
-        $this->assertSame([], $_SESSION['_flashMessages']);
+        $this->assertSame($_SESSION['_flash'], $flash->getNext());
+        $this->assertSame([], $_SESSION['_flash']);
     }
 }

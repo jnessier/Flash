@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Neoflow\FlashMessages\Exception;
+namespace Neoflow\Flash\Exception;
 
 use RuntimeException;
 

@@ -1,11 +1,11 @@
 <?php
 
 
-namespace Neoflow\FlashMessages\Test;
+namespace Neoflow\Flash\Test;
 
-use Neoflow\FlashMessages\Flash;
-use Neoflow\FlashMessages\FlashAwareInterface;
-use Neoflow\FlashMessages\FlashAwareTrait;
+use Neoflow\Flash\Flash;
+use Neoflow\Flash\FlashAwareInterface;
+use Neoflow\Flash\FlashAwareTrait;
 use PHPUnit\Framework\TestCase;
 
 class FlashAwareTraitTest extends TestCase implements FlashAwareInterface

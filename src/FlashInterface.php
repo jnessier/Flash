@@ -1,130 +1,107 @@
 <?php
 
 
-namespace Neoflow\FlashMessages;
+namespace Neoflow\Flash;
 
 interface FlashInterface
 {
     /**
-     * Add message to a message group by key for the next request.
-     *
-     * @param string $key Key as identifier of the message group
-     * @param mixed $message Message to add
-     *
-     * @return self
-     */
-    public function addMessage(string $key, $message): FlashInterface;
-
-    /**
-     * Add message to a message group by key for the current request.
-     *
-     * @param string $key Key as identifier of the message group
-     * @param mixed $message Message to add
-     *
-     * @return self
-     */
-    public function addCurrentMessage(string $key, $message): FlashInterface;
-
-    /**
-     * Clear messages of current and next request.
+     * Clear values of current and next request.
      *
      * @return self
      */
     public function clear(): FlashInterface;
 
     /**
-     * Count number of messages of a message group by key, set for current request.
-     *
-     * @param string $key Key as identifier of the message group
+     * Count number of values set for current request.
      *
      * @return int
      */
-    public function countMessages(string $key): int;
+    public function count(): int;
 
     /**
-     * Get message groups for current request.
+     * Get values for current request.
      *
      * @return array
      */
     public function getCurrent(): array;
 
     /**
-     * Get first message from a message group by key, set for current request.
+     * Get value by key set for current request.
      *
-     * @param string $key Key as identifier of the message group
-     * @param mixed $default Default value, when message group doesn't exists or is empty
-     *
-     * @return mixed
-     */
-    public function getFirstMessage(string $key, $default = null);
-
-    /**
-     * Get last message from a message group by key, set for current request.
-     *
-     * @param string $key Key as identifier of the message group
-     * @param mixed $default Default value, when message group doesn't exists or is empty
-     *
-     * @return mixed
-     */
-    public function getLastMessage(string $key, $default = null);
-
-    /**
-     * Get message group by key, set for current request.
-     *
-     * @param string $key Key as identifier of the message group
-     * @param mixed $default Default value, when message group doesn't exist or is empty
+     * @param string $key Key as identifier of the value
+     * @param mixed $default Default value, when key does not exist
      *
      * @return array
      */
-    public function getMessages(string $key, $default = []): array;
+    public function get(string $key, $default = null): array;
 
     /**
-     * Get message groups, set for next request.
+     * Get values set for next request.
      *
      * @return array
      */
     public function getNext(): array;
 
     /**
-     * Check whether message group by key exists.
+     * Check whether value by key for current request exists.
      *
-     * @param string $key Key as identifier of the message group
+     * @param string $key Key as identifier of the value
      *
      * @return bool
      */
-    public function hasMessages(string $key): bool;
+    public function has(string $key): bool;
 
     /**
-     * Keep current message groups for next request. Existing message groups will be overwritten.
+     * Set value by key for next request. Existing value will be overwritten.
+     *
+     * @param string $key Key as identifier of the value
+     * @param mixed $value Value to set
+     *
+     * @return self
+     */
+    public function set(string $key, $value): FlashInterface;
+
+    /**
+     * Remove value by key for next request.
+     *
+     * @param string $key Key as identifier of the value
+     *
+     * @return FlashInterface
+     */
+    public function remove(string $key): FlashInterface;
+
+    /**
+     * Keep current values for next request. Existing values will be overwritten.
      *
      * @return self
      */
     public function keep(): FlashInterface;
 
     /**
-     * Load messages from storage as reference.
+     * Load values from storage as reference.
      *
-     * @param array $storage Storage to load the message groups from
+     * @param array $storage Storage to load the values from
      *
      * @return self
      */
     public function load(array &$storage): FlashInterface;
 
     /**
-     * Set message groups for current request. Existing message groups will be overwritten.
+     * Set values for current request. Existing values will be overwritten.
      *
-     * @param array $groups Message groups to set
+     * @param array $values Values to set
      *
      * @return FlashInterface
      */
-    public function setCurrent(array $groups): FlashInterface;
+    public function setCurrent(array $values): FlashInterface;
 
     /**
-     * Set message groups for next request. Existing message groups will be overwritten.
+     * Set values next request. Existing values will be overwritten.
      *
-     * @param array $groups Message groups to set
+     * @param array $values Values to set
      *
      * @return FlashInterface
      */
-    public function setNext(array $groups): FlashInterface;
+    public function setNext(array $values): FlashInterface;
 }
