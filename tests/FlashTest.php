@@ -57,7 +57,8 @@ class FlashTest extends TestCase
             '1 Message B'
         ], $this->flash->get('group1'));
 
-        $this->assertSame([
+        $this->assertSame(
+            [
             'Default message'
         ],
             $this->flash->get('group9', [
