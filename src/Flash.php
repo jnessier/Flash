@@ -79,7 +79,7 @@ final class Flash implements FlashInterface
     /**
      * {@inheritDoc}
      */
-    public function get(string $key, $default = null): array
+    public function get(string $key, $default = null)
     {
         if ($this->has($key)) {
             return $this->current[$key];

@@ -32,9 +32,9 @@ interface FlashInterface
      * @param string $key Key as identifier of the value
      * @param mixed $default Default value, when key does not exist
      *
-     * @return array
+     * @return mixed
      */
-    public function get(string $key, $default = null): array;
+    public function get(string $key, $default = null);
 
     /**
      * Get values set for next request.

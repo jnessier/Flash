@@ -20,11 +20,11 @@ class FlashTest extends TestCase
         $this->flash = new Flash('_flash');
 
         $_SESSION['_flash'] = [
-            'group1' => [
+            'messages' => [
                 '1 Message A',
                 '1 Message B'
             ],
-            'group2' => []
+            'key' => 'value'
         ];
 
         $this->flash->load($_SESSION);
@@ -55,16 +55,9 @@ class FlashTest extends TestCase
         $this->assertSame([
             '1 Message A',
             '1 Message B'
-        ], $this->flash->get('group1'));
+        ], $this->flash->get('messages'));
 
-        $this->assertSame(
-            [
-            'Default message'
-        ],
-            $this->flash->get('group9', [
-                'Default message'
-            ])
-        );
+        $this->assertSame('Default message', $this->flash->get('key-dont-exist', 'Default message'));
     }
 
     public function testGetNext(): void
@@ -82,27 +75,25 @@ class FlashTest extends TestCase
 
     public function testSet(): void
     {
-        $this->flash->set('group1', '1 Message A');
+        $this->flash->set('key', 'value');
 
-        $next = $this->flash->getNext();
-
-        $this->assertTrue(isset($next['group1']));
+        $this->assertSame([
+            'key' => 'value'
+        ], $this->flash->getNext());
     }
 
     public function testRemove(): void
     {
-        $this->flash->set('group1', '1 Message A');
+        $this->flash->set('key', 'value');
 
-        $this->flash->remove('group1');
+        $this->flash->remove('key');
 
-        $next = $this->flash->getNext();
-
-        $this->assertFalse(isset($next['group1']));
+        $this->assertSame([], $this->flash->getNext());
     }
 
     public function testHas(): void
     {
-        $this->assertFalse($this->flash->has('group9'));
+        $this->assertFalse($this->flash->has('key-dont-exist'));
     }
 
     public function testKeep(): void
@@ -110,37 +101,33 @@ class FlashTest extends TestCase
         $this->flash->keep();
 
         $this->assertSame([
-            'group1' => [
+            'messages' => [
                 '1 Message A',
                 '1 Message B'
             ],
-            'group2' => []
-        ], $_SESSION['_flash']);
+            'key' => 'value'
+        ], $this->flash->getNext());
     }
 
     public function testSetCurrent(): void
     {
         $this->flash->setCurrent([
-            'group9' => [
-                '9 Message Z'
-            ]
+            'keyCurret' => 'valueCurrent'
         ]);
 
         $this->assertSame([
-            'group9' => [
-                '9 Message Z'
-            ]
+            'keyCurret' => 'valueCurrent'
         ], $this->flash->getCurrent());
     }
 
     public function testSetNext(): void
     {
         $this->flash->setNext([
-            'group9' => [
-                '9 Message Z'
-            ]
+            'key' => 'value'
         ]);
 
-        $this->assertSame($_SESSION['_flash'], $this->flash->getNext());
+        $this->assertSame([
+            'key' => 'value'
+        ], $this->flash->getNext());
     }
 }
