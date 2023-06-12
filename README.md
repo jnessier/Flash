@@ -1,3 +1,8 @@
+# This project is no longer maintained.
+Please use other solutions for flash messages with PHP.
+
+------------------------------------------------------------
+
 # Flash
 [![Build Status](https://github.com/neoflow/flash/workflows/Tests/badge.svg)](https://github.com/neoflow/flash/actions?query=branch:4.x)
 [![Latest Stable Version](https://poser.pugx.org/neoflow/flash/v?service=github)](https://packagist.org/packages/neoflow/flash)
